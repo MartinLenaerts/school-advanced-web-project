@@ -1,7 +1,7 @@
 # project
 
-# Date de verification de la branche master :
-Vendredi 22/10/2021 à 23h59
+## Date de verification de la branche master : <b>Vendredi 22/10/2021 à 23h59</b>
+
 
 ## Project setup
 ```
