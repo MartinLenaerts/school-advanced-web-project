@@ -1,9 +1,6 @@
 <template>
   <c-box>
-    <c-heading>Welcome to Golden Truffles</c-heading>
-    <c-link as="router-link" to="/sign-in">
-      <c-button variant-color="blue" variant="outline">Connection</c-button>
-    </c-link>
+    <c-heading text-align="center">Welcome to Golden Truffles</c-heading>
   </c-box>
 </template>
 
