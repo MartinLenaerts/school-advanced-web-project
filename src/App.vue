@@ -1,15 +1,13 @@
 <template>
-  <Home />
+    <router-view />
 </template>
 
 <script>
 import { Vue, Component } from "vue-property-decorator";
-import Connection from "../../truffle/src/views/Connection.vue";
 import Home from "@/views/Home";
 @Component({
   components: {
-    Home,
-    Connection,
+    Home
   },
   methods:{
     test:Function
