@@ -4,17 +4,30 @@
   </c-box>
 </template>
 
-<script>
-import {Component, Vue} from "vue-property-decorator";
-import {CBox, CHeading, CText,CButton,CLink} from "@chakra-ui/vue";
+<script lang="ts">
+import {Component, Prop, Vue} from "vue-property-decorator";
+import {CBox, CButton, CHeading, CLink, CText} from "@chakra-ui/vue";
 
 @Component(
     {
       components: {
-        CBox, CText, CHeading,CButton,CLink
+        CBox, CText, CHeading, CButton, CLink
       }
     })
 export default class Home extends Vue {
+
+  mounted() : void{
+  console.log("home mounted")
+    this.$root.$on("sign-out",()=>{
+      console.log("sign-out")
+      this.$toast({
+        title: 'Deconnexion',
+        description: "Vous avez bien été déconnecté",
+        status: 'success',
+        duration: 10000
+      })
+    })
+  }
 }
 </script>
 
