@@ -6,9 +6,13 @@
     <c-box class="container_link">
       <router-link to="/">Home</router-link>
     </c-box>
-    <c-box class="container_link" id="None">
-    </c-box>
     <template v-if="this.$session.exists()">
+      <template v-if="this.$session.get('user').seller">
+        <c-box class="container_link">
+          <router-link to="/ads" class="text_after_icon">Mes annonces</router-link>
+        </c-box>
+      </template>
+      <c-box class="container_link" id="None"></c-box>
       <c-box class="container_link">
         <c-icon name="user"/>
         <router-link to="/profil" class="text_after_icon">Profil</router-link>
@@ -19,6 +23,7 @@
       </c-box>
     </template>
     <template v-else>
+      <c-box class="container_link" id="None"></c-box>
       <c-box class="container_link">
         <c-icon name="login" color="green.300"/>
         <router-link to="/sign-in" class="text_after_icon">Sign In</router-link>
@@ -48,7 +53,7 @@ export default class NavBar extends Vue {
   async signOut(): Promise<void> {
     this.$session.destroy();
     this.$forceUpdate();
-    this.$root.$emit("sign-out","sign-out");
+    this.$root.$emit("sign-out", "sign-out");
   }
 
 }

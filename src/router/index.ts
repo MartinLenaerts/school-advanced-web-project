@@ -43,6 +43,23 @@ const routes: Array<RouteConfig> = [
                 next()
             } else next("/");
         }
+    },
+    {
+        path: '/ads',
+        name: "Ads",
+        component: () => import(/* webpackChunkName: "about" */ '../views/Ads.vue'),
+        beforeEnter(to, from, next) {
+            const session = Vue.prototype.$session;
+            if (session.exists()) {
+                next()
+            } else next("/");
+        }
+    },
+    {
+        path: '/product/:id',
+        name: "Product",
+        component: () => import(/* webpackChunkName: "about" */ '../views/ProductView.vue'),
+        props:true
     }
 
 ]

@@ -10,7 +10,6 @@ const firebaseConfig = {
     authDomain: process.env.VUE_APP_AUTH_DOMAIN,
     projectId: process.env.VUE_APP_PROJET_ID
 };
-console.log(firebaseConfig)
 
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore();
