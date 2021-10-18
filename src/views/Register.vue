@@ -1,9 +1,9 @@
 <template>
   <c-box>
-    <c-heading text-align="center" padding-bottom="1rem">Sign in</c-heading>
+    <c-heading text-align="center" padding-bottom="1rem">Sign up</c-heading>
     <c-box id="container_login">
       <c-box id="container_form_login" shadow="md">
-        <form-login/>
+        <form-register />
       </c-box>
     </c-box>
   </c-box>
@@ -12,16 +12,16 @@
 <script>
 import {Component, Vue} from "vue-property-decorator";
 import {CBox, CHeading} from "@chakra-ui/vue";
-import FormLogin from "@/components/Login/FormLogin";
+import FormRegister from "@/components/Login/FormRegister";
 
 @Component({
   components: {
-    FormLogin,
+    FormRegister,
     CBox,
     CHeading
   }
 })
-export default class Connection extends Vue {
+export default class Register extends Vue {
 }
 </script>
 
@@ -32,7 +32,7 @@ export default class Connection extends Vue {
   padding: 2rem;
 }
 
-#container_login{
+#container_login {
   display: flex;
 }
 </style>

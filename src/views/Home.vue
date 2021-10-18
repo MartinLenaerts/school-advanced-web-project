@@ -1,17 +1,18 @@
 <template>
-  <CBox>
-    <CText>Hello</CText>
-  </CBox>
+  <c-box>
+    <c-heading text-align="center">Welcome to Golden Truffles</c-heading>
+
+  </c-box>
 </template>
 
-<script>
-import {Component, Vue} from "vue-property-decorator";
-import {CBox, CText} from "@chakra-ui/vue";
+<script lang="ts">
+import {Component, Prop, Vue} from "vue-property-decorator";
+import {CBox, CButton, CHeading, CLink, CText} from "@chakra-ui/vue";
 
 @Component(
     {
       components: {
-        CBox, CText
+        CBox, CText, CHeading, CButton, CLink
       }
     })
 export default class Home extends Vue {
