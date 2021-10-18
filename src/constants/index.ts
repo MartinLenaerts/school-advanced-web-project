@@ -25,6 +25,9 @@ export function getError(firebaseError: FirebaseError): Error {
         case "auth/weak-password" :
             error = {message: "Mot de passe trop faible", show: true}
             break;
+        case "auth/email-already-in-use" :
+            error = {message: "Email déjà utilisé", show: true}
+            break;
         default :
             error = {message: firebaseError.code, show: true}
     }

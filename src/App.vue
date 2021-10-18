@@ -7,7 +7,7 @@
   </c-box>
 </template>
 
-<script>
+<script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import Home from "@/views/Home";
 import NavBar from "@/components/NavBar";
@@ -20,5 +20,26 @@ import {CBox} from "@chakra-ui/vue";
 })
 export default class App extends Vue {
 
+  mounted() : void{
+    this.$root.$on("sign-out",()=>{
+      console.log("sign-out")
+      this.$toast({
+        title: 'Deconnexion',
+        description: "Vous avez bien été déconnecté",
+        status: 'success',
+        duration: 10000
+      })
+    })
+
+    this.$root.$on("sign-up",()=>{
+      console.log("sign-up")
+      this.$toast({
+        title: 'Inscription',
+        description: "Votre compte à bien été créé",
+        status: 'success',
+        duration: 10000
+      })
+    })
+  }
 }
 </script>

@@ -72,8 +72,11 @@ export default class FormRegister extends Vue {
   }
   private type = "acheteur";
 
-  @Emit()
-  async register() {
+  async register() : Promise<void> {
+    this.error = {
+      show: false,
+      message: " "
+    }
     if (this.email != "" && this.password != "" && this.name != "" && this.firstname != "") {
       try {
         const firebaseAuth = getAuth();
@@ -87,6 +90,8 @@ export default class FormRegister extends Vue {
             name: this.name,
             seller: this.type == "vendeur",
           });
+          this.$root.$emit("sign-up","sign-up")
+          await this.$router.push("/");
         } catch (e) {
           console.error("Error adding document: ", e);
         }
