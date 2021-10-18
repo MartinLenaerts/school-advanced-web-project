@@ -2,18 +2,31 @@ import {FirebaseError} from "@firebase/app";
 
 export interface Error {
     show: boolean,
-    message : string
+    message: string
 }
 
 
 export function getError(firebaseError: FirebaseError): Error {
-    const errorsEnum = {
-        "auth/invalid-email": "Veuillez entrer un email valide",
-        "auth/invalid-password": "Mot de passe invalide",
-        "auth/user-not-found": "Cette adresse mail ne correspond à aucun compte",
-        "auth/wrong-password" : "Mot de passe incorrect"
+    let error: Error;
+    switch (firebaseError.code) {
+        case "auth/invalid-email":
+            error = {message: "Veuillez entrer un email valide", show: true}
+            break;
+        case "auth/invalid-password":
+            error = {message: "Mot de passe invalide", show: true}
+            break;
+        case "auth/user-not-found":
+            error = {message: "Cette adresse mail ne correspond à aucun compte", show: true}
+            break;
+        case "auth/wrong-password" :
+
+            error = {message: "Mot de passe incorrect", show: true}
+            break;
+        case "auth/weak-password" :
+            error = {message: "Mot de passe trop faible", show: true}
+            break;
+        default :
+            error = {message: firebaseError.code, show: true}
     }
-    console.log(firebaseError.code)
-    const message =  errorsEnum[firebaseError.code] == undefined ? firebaseError.code : errorsEnum[firebaseError.code];
-    return {show: true, message: message};
+    return error;
 }

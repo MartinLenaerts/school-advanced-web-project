@@ -3,12 +3,17 @@
 
     <c-alert status="error" v-show="error.show" mb="1rem">
       <c-alert-icon/>
-      {{error.message}}
+      {{ error.message }}
     </c-alert>
 
     <c-form-control class="container_field" is-required>
       <c-form-label>Nom :</c-form-label>
       <c-input v-model="name"/>
+    </c-form-control>
+
+    <c-form-control class="container_field" is-required>
+      <c-form-label>Prenom :</c-form-label>
+      <c-input v-model="firstname"/>
     </c-form-control>
 
     <c-form-control class="container_field" is-required>
@@ -24,7 +29,7 @@
     <c-form-control class="container_field" is-required>
       <c-form-label>Type d'utilisateur :</c-form-label>
       <c-radio-group v-model="type" :default-value="type">
-        <c-radio value="acheteur" >Acheteur</c-radio>
+        <c-radio value="acheteur">Acheteur</c-radio>
         <c-radio value="vendeur">Vendeur</c-radio>
       </c-radio-group>
     </c-form-control>
@@ -35,50 +40,65 @@
       </c-button>
     </c-box>
 
-    <c-box >
-      <c-text>Vous avez pas deja un compte ? <router-link to="/sign-in" color="grey">Connectez vous</router-link></c-text>
+    <c-box>
+      <c-text>Vous avez pas deja un compte ?
+        <router-link to="/sign-in" color="grey">Connectez vous</router-link>
+      </c-text>
     </c-box>
   </c-box>
 </template>
 
 <script lang="ts">
-import {Component, Emit,  Vue} from "vue-property-decorator";
-import {CBox, CButton, CFormControl, CFormLabel, CInput, CRadio, CRadioGroup,CText, CAlert,CAlertIcon} from "@chakra-ui/vue";
-import {getAuth, createUserWithEmailAndPassword} from "firebase/auth";
+import {Component, Emit, Vue} from "vue-property-decorator";
+import {CAlert, CAlertIcon, CBox, CButton, CFormControl, CFormLabel, CInput, CRadio, CRadioGroup, CText} from "@chakra-ui/vue";
+import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
+import {setDoc, doc, getFirestore} from "firebase/firestore";
 import {FirebaseError} from "@firebase/app";
-import {getError} from "@/constants";
+import {getError,Error} from "@/constants";
 
 @Component({
   components: {
-    CFormControl, CFormLabel, CInput, CButton, CBox, CRadio, CRadioGroup, CText , CAlert,CAlertIcon
+    CFormControl, CFormLabel, CInput, CButton, CBox, CRadio, CRadioGroup, CText, CAlert, CAlertIcon
   }
 })
 export default class FormRegister extends Vue {
   private email = "";
   private password = "";
   private name = "";
-  private error : Error = {
-    show : false,
-    message : ""
+  private firstname = "";
+  private error: Error = {
+    show: false,
+    message: " "
   }
   private type = "acheteur";
+
   @Emit()
   async register() {
-    if (this.email != "" && this.password != "") {
+    if (this.email != "" && this.password != "" && this.name != "" && this.firstname != "") {
       try {
         const firebaseAuth = getAuth();
         const userCredential = await createUserWithEmailAndPassword(firebaseAuth, this.email, this.password)
-        const user = userCredential.user
-        console.log(user);
-      } catch (error : FirebaseError) {
+        const user = userCredential.user;
+
+        const db = getFirestore();
+        try {
+          const docRef = await setDoc(doc(db,"users",user.uid), {
+            firstname: this.firstname,
+            name: this.name,
+            seller: this.type == "vendeur",
+          });
+        } catch (e) {
+          console.error("Error adding document: ", e);
+        }
+      } catch (error: FirebaseError) {
         console.log(error);
         this.error = getError(error)
         console.log(this.error);
       }
     } else {
-    this.error = {
-        show : true,
-        message : "Veuillez entrer un email et un mot de passe "
+      this.error = {
+        show: true,
+        message: "Veuillez remplir tous les champs du formulaire"
       }
     }
   }
@@ -88,7 +108,7 @@ export default class FormRegister extends Vue {
 </script>
 
 <style scoped>
-.container_field{
+.container_field {
   margin-bottom: 1rem;
 }
 </style>

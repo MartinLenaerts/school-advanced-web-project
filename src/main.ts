@@ -3,17 +3,17 @@ import App from './App.vue'
 import router from './router'
 import Chakra, {CBox, CColorModeProvider, CReset, CThemeProvider} from "@chakra-ui/vue";
 import {initializeApp} from 'firebase/app';
-import VueSession from 'vue-session'
-
+import { getFirestore } from "firebase/firestore";
+import VueSession from 'vue-session';
 const firebaseConfig = {
-    apiKey: 'AIzaSyDF09-MOxd9DsWp2KB21yCvqNZ77aQQjQk',
-    authDomain: 'truffle-329e7.firebaseapp.com',
-    projectId: 'truffle-329e7'
+    apiKey: process.env.VUE_APP_API_KEY,
+    authDomain: process.env.VUE_APP_AUTH_DOMAIN,
+    projectId: process.env.VUE_APP_PROJET_ID
 };
+console.log(firebaseConfig)
 
 const firebaseApp = initializeApp(firebaseConfig);
-
-
+const db = getFirestore();
 
 
 const icons = {

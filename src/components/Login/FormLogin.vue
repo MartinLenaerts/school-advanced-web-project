@@ -32,6 +32,7 @@
 import {Component, Emit, Vue} from "vue-property-decorator";
 import {CAlert, CAlertIcon, CBox, CButton, CFormControl, CFormLabel, CInput, CText} from "@chakra-ui/vue";
 import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
+import {getDoc, doc, getFirestore} from "firebase/firestore";
 import {FirebaseError} from "@firebase/app";
 import {Error, getError} from "@/constants";
 import NavBar from "@/components/NavBar.vue";
@@ -54,10 +55,12 @@ export default class FormLogin extends Vue {
     if (this.email != "" && this.password != "") {
       try {
         const firebaseAuth = getAuth();
+        const db = getFirestore();
         const userCredential = await signInWithEmailAndPassword(firebaseAuth, this.email, this.password);
-        console.log(userCredential);
+        const docRef = doc(db, "users", userCredential.user.uid);
+        const docSnap = await getDoc(docRef);
         this.$session.start();
-        this.$session.set("user",userCredential.user);
+        this.$session.set("user",{...userCredential.user,...docSnap.data()});
         this.$root.$emit("sign-in","sign-in");
         await this.$router.push('/');
       } catch (error: FirebaseError) {
