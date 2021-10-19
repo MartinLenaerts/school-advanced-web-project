@@ -8,22 +8,22 @@
 
     <c-form-control class="container_field" is-required>
       <c-form-label>Nom :</c-form-label>
-      <c-input v-model="name"/>
+      <c-input v-model="user.name"/>
     </c-form-control>
 
     <c-form-control class="container_field" is-required>
       <c-form-label>Prenom :</c-form-label>
-      <c-input v-model="firstname"/>
+      <c-input v-model="user.firstname"/>
     </c-form-control>
 
     <c-form-control class="container_field" is-required>
       <c-form-label>Email :</c-form-label>
-      <c-input v-model="email"/>
+      <c-input v-model="user.email"/>
     </c-form-control>
 
     <c-form-control class="container_field" is-required>
       <c-form-label>Password :</c-form-label>
-      <c-input v-model="password" type="password"/>
+      <c-input v-model="user.password" type="password"/>
     </c-form-control>
 
     <c-form-control class="container_field" is-required>
@@ -49,12 +49,12 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {CAlert, CAlertIcon, CBox, CButton, CFormControl, CFormLabel, CInput, CRadio, CRadioGroup, CText} from "@chakra-ui/vue";
 import {createUserWithEmailAndPassword, getAuth} from "firebase/auth";
-import {setDoc, doc, getFirestore} from "firebase/firestore";
+import {doc, getFirestore, setDoc} from "firebase/firestore";
 import {FirebaseError} from "@firebase/app";
-import {getError,Error} from "@/constants";
+import {Error, getError, User} from "@/constants";
 
 @Component({
   components: {
@@ -62,35 +62,38 @@ import {getError,Error} from "@/constants";
   }
 })
 export default class FormRegister extends Vue {
-  private email = "";
-  private password = "";
-  private name = "";
-  private firstname = "";
+  private user: User = {
+    email: "",
+    password: "",
+    name: "",
+    firstname: "",
+    seller : false
+  }
   private error: Error = {
     show: false,
     message: " "
   }
-  private type = "acheteur";
+  private type  = "acheteur";
 
-  async register() : Promise<void> {
+  async register(): Promise<void> {
     this.error = {
       show: false,
       message: " "
     }
-    if (this.email != "" && this.password != "" && this.name != "" && this.firstname != "") {
+    if (this.user.email != "" && this.user.password != "" && this.user.name != "" && this.user.firstname != "") {
       try {
         const firebaseAuth = getAuth();
-        const userCredential = await createUserWithEmailAndPassword(firebaseAuth, this.email, this.password)
+        const userCredential = await createUserWithEmailAndPassword(firebaseAuth, this.user.email, this.user.password)
         const user = userCredential.user;
 
         const db = getFirestore();
         try {
-          const docRef = await setDoc(doc(db,"users",user.uid), {
-            firstname: this.firstname,
-            name: this.name,
+          const docRef = await setDoc(doc(db, "users", user.uid), {
+            firstname: this.user.firstname,
+            name: this.user.name,
             seller: this.type == "vendeur",
           });
-          this.$root.$emit("sign-up","sign-up")
+          this.$root.$emit("sign-up", "sign-up")
           await this.$router.push("/");
         } catch (e) {
           console.error("Error adding document: ", e);

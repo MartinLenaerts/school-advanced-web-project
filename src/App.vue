@@ -22,7 +22,7 @@ export default class App extends Vue {
 
   mounted() : void{
     this.$root.$on("sign-out",()=>{
-      console.log("sign-out")
+      if(this.$route.name != "Home")this.$router.push("/")
       this.$toast({
         title: 'Deconnexion',
         description: "Vous avez bien été déconnecté",
