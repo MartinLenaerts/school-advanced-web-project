@@ -30,6 +30,7 @@ export default class ProductView extends Vue {
       const docRef = doc(db, "users", product.seller);
       const docUser = await getDoc(docRef);
       const seller = docUser.data() as User;
+      seller.uid = docUser.id;
       this.product = {
         id: docSnap.id,
         name: product.name,

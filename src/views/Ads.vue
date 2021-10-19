@@ -56,7 +56,7 @@
     <c-button @click="openDialog">
       Nouvelle annonce
     </c-button>
-    <template v-for="product in this.products">
+    <template v-for="product in products">
       <product-list-component :product="product" :key="product.id" class="product_element"/>
     </template>
   </c-box>
@@ -140,7 +140,7 @@ export default class Ads extends Vue {
         id: doc.id,
         name: product.name,
         price: product.price,
-        seller: product.seller,
+        seller: null,
         description: product.description,
         image_ref: product.image_ref,
       })
@@ -188,8 +188,6 @@ export default class Ads extends Vue {
     } catch (e) {
       console.error("Error adding document: ", e);
     }
-
-
   }
 }
 </script>

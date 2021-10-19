@@ -14,6 +14,10 @@
       </template>
       <c-box class="container_link" id="None"></c-box>
       <c-box class="container_link">
+        <c-icon name="message"/>
+        <router-link to="/messages" class="text_after_icon">Messages</router-link>
+      </c-box>
+      <c-box class="container_link">
         <c-icon name="user"/>
         <router-link to="/profil" class="text_after_icon">Profil</router-link>
       </c-box>

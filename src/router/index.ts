@@ -60,6 +60,17 @@ const routes: Array<RouteConfig> = [
         name: "Product",
         component: () => import(/* webpackChunkName: "about" */ '../views/ProductView.vue'),
         props:true
+    },
+    {
+        path: '/messages',
+        name: "Messages",
+        component: () => import(/* webpackChunkName: "about" */ '../views/Messages.vue'),
+        beforeEnter(to, from, next) {
+            const session = Vue.prototype.$session;
+            if (session.exists()) {
+                next()
+            } else next("/");
+        }
     }
 
 ]

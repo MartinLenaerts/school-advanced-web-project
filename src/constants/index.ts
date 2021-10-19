@@ -10,17 +10,27 @@ export interface User {
     firstname: string,
     seller: boolean,
     email: string,
-    password : string
+    password: string
 }
 
 
 export interface Product {
     id: string,
-    name: string;
-    price: number;
-    seller: User | string | null;
-    description:string,
-    image_ref:string | null
+    name: string,
+    price: number,
+    seller: User | string | null,
+    description: string,
+    image_ref: string | null
+}
+
+
+export interface Message {
+    id: string,
+    content: string,
+    sender: User,
+    receiver: User,
+    product: Product,
+    answeredTo : Message | null
 }
 
 
