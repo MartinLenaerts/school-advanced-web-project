@@ -1,9 +1,7 @@
 <template>
   <c-box>
     <nav-bar/>
-    <router-view
-
-    />
+    <router-view />
   </c-box>
 </template>
 

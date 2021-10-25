@@ -1,7 +1,7 @@
 <template>
   <c-box class="container_message" shadow="md" p="1rem" m="1rem">
     <c-box>
-      <c-text class="sender">Message de : <span>{{ message.sender.firstname }} {{ message.sender.name }}</span></c-text>
+      <c-text class="sender">Message envoyé à  : <span>{{ message.receiver.firstname }} {{ message.receiver.name }}</span></c-text>
       <c-text class="product">Produit concerné : <span>{{ message.product.name }}</span></c-text>
     </c-box>
     <c-box>

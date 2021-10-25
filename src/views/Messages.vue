@@ -6,7 +6,7 @@
     <template v-for="message in received_messages">
       <received-message-component :key="message.id" :message="message"/>
     </template>
-    <c-divider m="4rem" />
+    <c-divider m="4rem"/>
     <c-heading ml="2rem" size="lg">Messages envoyés</c-heading>
     <template v-for="message in sended_messages">
       <sended-message-component :key="message.id" :message="message"/>
@@ -18,12 +18,12 @@
 import {Component, Vue} from "vue-property-decorator";
 import {collection, doc, getDoc, getDocs, getFirestore, query, where} from "firebase/firestore";
 import {Message} from "@/constants";
-import {CBox, CHeading,CDivider} from "@chakra-ui/vue";
+import {CBox, CDivider, CHeading} from "@chakra-ui/vue";
 import SendedMessageComponent from "@/components/Messages/SendedMessageComponent.vue";
 import ReceivedMessageComponent from "@/components/Messages/ReceivedMessageComponent.vue";
 
 @Component({
-  components: {CBox, SendedMessageComponent, ReceivedMessageComponent, CHeading,CDivider}
+  components: {CBox, SendedMessageComponent, ReceivedMessageComponent, CHeading, CDivider}
 })
 export default class Messages extends Vue {
   private received_messages: Message[] = [];
@@ -47,7 +47,8 @@ export default class Messages extends Vue {
         sender: user,
         product: product,
         receiver: this.$session.get("user"),
-        answeredTo: message.answeredTo
+        answeredTo: message.answeredTo,
+        isAnswered: message.isAnswered
       })
     });
 
@@ -56,7 +57,7 @@ export default class Messages extends Vue {
     querySnapshot_sender.forEach(async (document) => {
       const message = document.data();
       const docProduct = await getDoc(doc(db, "products", message.product))
-      const docUser = await getDoc(doc(db, "users", message.sender))
+      const docUser = await getDoc(doc(db, "users", message.receiver))
       const product = docProduct.data();
       const user = docUser.data();
       product.id = docProduct.id;
@@ -64,9 +65,11 @@ export default class Messages extends Vue {
       this.sended_messages.push({
         id: document.id,
         content: message.content,
-        sender: user,
+        sender: this.$session.get("user"),
         product: product,
-        receiver: this.$session.get("user")
+        receiver: user,
+        answeredTo: message.answeredTo,
+        isAnswered: message.isAnswered
       })
     });
   }

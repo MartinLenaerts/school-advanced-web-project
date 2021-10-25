@@ -67,7 +67,8 @@ export default class FormRegister extends Vue {
     password: "",
     name: "",
     firstname: "",
-    seller : false
+    seller : false,
+    uid:""
   }
   private error: Error = {
     show: false,

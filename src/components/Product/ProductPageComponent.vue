@@ -42,7 +42,7 @@
               </c-alert-dialog-footer>
             </c-alert-dialog-content>
           </c-alert-dialog>
-          <c-button @click="openDialog">
+          <c-button @click="openDialog" width="min-content">
             Acheter
           </c-button>
         </template>
@@ -74,7 +74,7 @@ import {addDoc, collection, getFirestore} from "firebase/firestore";
   }
 })
 export default class ProductPageComponent extends Vue {
-  @Prop() private product: Product | undefined;
+  @Prop() private product: Product;
   private message = "";
   private error: Error = {
     message: "",
@@ -90,7 +90,7 @@ export default class ProductPageComponent extends Vue {
     this.isOpen = true;
   }
 
-  private async buy(): boolean {
+  private async buy(): Promise<boolean> {
     this.error = {
       show: false,
       message: ""
@@ -102,7 +102,7 @@ export default class ProductPageComponent extends Vue {
     try {
       const db = getFirestore();
       console.log({content:this.message,user:this.product.seller.uid});
-      const docRef = await addDoc(collection(db, "messages"), {content:this.message,receiver:this.product.seller.uid,sender:this.$session.get("user").uid,product:this.product?.id});
+      const docRef = await addDoc(collection(db, "messages"), {content:this.message,receiver:this.product.seller.uid,sender:this.$session.get("user").uid,product:this.product?.id,isAnswered:false});
       this.$toast({
         title: 'Message envoyé',
         description: "Votre message à bien été envoyé",
@@ -110,8 +110,10 @@ export default class ProductPageComponent extends Vue {
         duration: 10000
       })
       this.isOpen = false;
+      return true;
     } catch (e) {
       console.error("Error adding document: ", e);
+      return false;
     }
   }
 }

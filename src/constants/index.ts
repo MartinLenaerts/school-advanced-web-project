@@ -6,6 +6,7 @@ export interface Error {
 }
 
 export interface User {
+    uid : string,
     name: string,
     firstname: string,
     seller: boolean,
@@ -18,9 +19,9 @@ export interface Product {
     id: string,
     name: string,
     price: number,
-    seller: User | string | null,
+    seller: User,
     description: string,
-    image_ref: string | null
+    image_ref: string
 }
 
 
@@ -30,7 +31,8 @@ export interface Message {
     sender: User,
     receiver: User,
     product: Product,
-    answeredTo : Message | null
+    answeredTo : Message | null,
+    isAnswered : boolean
 }
 
 
