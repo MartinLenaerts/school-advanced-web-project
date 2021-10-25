@@ -54,8 +54,6 @@ export default class FormLogin extends Vue {
   created(): void {
     console.log(this.message)
   }
-
-  @Emit("sign-in")
   async signIn(): Promise<void> {
     if (this.email != "" && this.password != "") {
       try {

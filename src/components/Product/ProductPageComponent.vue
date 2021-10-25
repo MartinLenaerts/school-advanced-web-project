@@ -54,7 +54,7 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {Error, Product, User} from "@/constants";
-import {CAlert, CAlertDialog, CAlertDialogBody, CAlertDialogContent,CTextarea, CAlertDialogFooter, CAlertDialogHeader, CAlertDialogOverlay, CAlertIcon, CBadge, CBox, CButton, CFormControl, CFormLabel, CHeading, CImage, CInput, CText} from "@chakra-ui/vue";
+import {CAlert, CAlertDialog, CAlertDialogBody, CAlertDialogContent, CAlertDialogFooter, CAlertDialogHeader, CAlertDialogOverlay, CAlertIcon, CBadge, CBox, CButton, CFormControl, CFormLabel, CHeading, CImage, CText, CTextarea} from "@chakra-ui/vue";
 import {addDoc, collection, getFirestore} from "firebase/firestore";
 
 @Component({
@@ -107,7 +107,7 @@ export default class ProductPageComponent extends Vue {
     try {
       const db = getFirestore();
       console.log({content:this.message,user:this.product?.seller.uid});
-      const docRef = await addDoc(collection(db, "messages"), {content:this.message,receiver:this.product?.seller.uid,sender:this.$store.state.user.uid,product:this.product?.id,isAnswered:false});
+      await addDoc(collection(db, "messages"), {content:this.message,receiver:this.product?.seller.uid,sender:this.$store.state.user.uid,product:this.product?.id,isAnswered:false});
       this.$toast({
         title: 'Message envoyé',
         description: "Votre message à bien été envoyé",

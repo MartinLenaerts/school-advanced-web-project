@@ -48,14 +48,21 @@ import {User} from "@/constants";
 })
 export default class NavBar extends Vue {
 
-  getUser(): User | null{
+  getUser(): User | null {
     console.log(this.$store.state);
     return this.$store.state.user;
   }
 
 
   async signOut(): Promise<void> {
-    this.$store.commit("setUser",null)
+    this.$store.commit("setUser", null)
+    if (this.$route.path != "/") this.$router.push("/")
+    this.$toast({
+      title: 'Deconnexion',
+      description: "Vous avez bien été déconnecté",
+      status: 'success',
+      duration: 10000
+    })
   }
 
 }

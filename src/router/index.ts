@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter, {NavigationGuardNext, RouteConfig} from 'vue-router'
 import Home from '../views/Home.vue'
 import store from "@/utils/store"
+
 Vue.use(VueRouter)
 
 function loggedIn(next : NavigationGuardNext<Vue>){

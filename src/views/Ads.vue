@@ -65,7 +65,7 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import {Error, Product, User} from "@/constants";
-import {collection, doc, getDocs, getFirestore, query, addDoc, where} from "firebase/firestore";
+import {addDoc, collection, getDocs, getFirestore, query, where} from "firebase/firestore";
 import {
   CAlert,
   CAlertDialog,
@@ -175,7 +175,7 @@ export default class Ads extends Vue {
     }
     try {
       const db = getFirestore();
-      const docRef = await addDoc(collection(db, "products"), this.newProduct);
+      await addDoc(collection(db, "products"), this.newProduct);
       this.$toast({
         title: 'Nouvelle Annonce',
         description: "Votre annonce à bien été créée",

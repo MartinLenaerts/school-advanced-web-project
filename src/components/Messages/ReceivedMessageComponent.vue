@@ -106,8 +106,8 @@ export default class ReceivedMessageComponent extends Vue {
 
     try {
       const db = getFirestore();
-      const docRef = await addDoc(collection(db, "messages"), {content: this.answer, receiver: this.message.sender.uid, sender: this.$store.state.user.uid, product: this.message.product.id, answeredTo: this.message.id, isAnswered: false});
-      const docRes = await setDoc(doc(db, "messages", this.message.id), {isAnswered: true}, {merge: true});
+      await addDoc(collection(db, "messages"), {content: this.answer, receiver: this.message.sender.uid, sender: this.$store.state.user.uid, product: this.message.product.id, answeredTo: this.message.id, isAnswered: false});
+      await setDoc(doc(db, "messages", this.message.id), {isAnswered: true}, {merge: true});
       this.$toast({
         title: 'Reponse envoyée',
         description: "Votre reponse à bien été envoyée",

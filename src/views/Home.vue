@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {CBox, CButton, CHeading, CLink, CText,CDivider} from "@chakra-ui/vue";
+import {CBox, CButton, CDivider, CHeading, CLink, CText} from "@chakra-ui/vue";
 import {Product, User} from "@/constants";
 import ProductListComponent from "@/components/Product/ProductListComponent.vue";
 import {collection, doc, getDoc, getDocs, getFirestore} from "firebase/firestore";

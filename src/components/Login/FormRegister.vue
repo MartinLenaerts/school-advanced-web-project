@@ -89,12 +89,17 @@ export default class FormRegister extends Vue {
 
         const db = getFirestore();
         try {
-          const docRef = await setDoc(doc(db, "users", user.uid), {
+          await setDoc(doc(db, "users", user.uid), {
             firstname: this.user.firstname,
             name: this.user.name,
             seller: this.type == "vendeur",
           });
-          this.$root.$emit("sign-up", "sign-up")
+          this.$toast({
+            title: 'Inscription',
+            description: "Votre compte à bien été créé",
+            status: 'success',
+            duration: 10000
+          })
           await this.$router.push("/");
         } catch (e) {
           console.error("Error adding document: ", e);
