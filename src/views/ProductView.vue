@@ -5,14 +5,14 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import ProductPageComponent from "@/components/Product/ProductPageComponent.vue";
-import {collection, doc, getDoc, getFirestore} from "firebase/firestore";
-import {User,Product} from "@/constants";
+import { doc, getDoc, getFirestore} from "firebase/firestore";
+import {User} from "@/constants";
 
 @Component({
   components: {ProductPageComponent}
 })
 export default class ProductView extends Vue {
-  @Prop() private id: string ;
+  @Prop() private id!: string ;
   private product ={
     id:"",
     name:"",

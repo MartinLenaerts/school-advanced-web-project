@@ -6,8 +6,8 @@
     <c-box class="container_link">
       <router-link to="/">Home</router-link>
     </c-box>
-    <template v-if="this.$session.exists()">
-      <template v-if="this.$session.get('user').seller">
+    <template v-if="getUser()">
+      <template v-if="getUser().seller">
         <c-box class="container_link">
           <router-link to="/ads" class="text_after_icon">Mes annonces</router-link>
         </c-box>
@@ -39,6 +39,7 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import {CBox, CIcon, CImage, CPseudoBox, CText} from "@chakra-ui/vue";
+import {User} from "@/constants";
 
 @Component({
   components: {
@@ -47,17 +48,14 @@ import {CBox, CIcon, CImage, CPseudoBox, CText} from "@chakra-ui/vue";
 })
 export default class NavBar extends Vue {
 
-  mounted(): void {
-    this.$root.$on("sign-in", (msg) => {
-      this.$forceUpdate()
-    })
+  getUser(): User | null{
+    console.log(this.$store.state);
+    return this.$store.state.user;
   }
 
 
   async signOut(): Promise<void> {
-    this.$session.destroy();
-    this.$forceUpdate();
-    this.$root.$emit("sign-out", "sign-out");
+    this.$store.commit("setUser",null)
   }
 
 }

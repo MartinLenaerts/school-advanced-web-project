@@ -126,13 +126,13 @@ export default class Ads extends Vue {
     id: "",
     name: "",
     price: 0,
-    seller: this.$session.get("user").uid,
+    seller: this.$store.state.user.uid,
     description: "",
     image_ref: "",
   }
 
   async mounted(): Promise<void> {
-    const q = query(collection(getFirestore(), "products"), where("seller", "==", this.$session.get("user").uid));
+    const q = query(collection(getFirestore(), "products"), where("seller", "==", this.$store.state.user.uid));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       const product = doc.data();

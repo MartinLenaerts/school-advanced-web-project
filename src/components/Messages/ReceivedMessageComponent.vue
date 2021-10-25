@@ -77,7 +77,7 @@ import {addDoc, collection, doc, getFirestore, setDoc} from "firebase/firestore"
   }
 })
 export default class ReceivedMessageComponent extends Vue {
-  @Prop() private message: Message;
+  @Prop() private message!: Message;
 
   private answer = "";
   private error: Error = {
@@ -106,7 +106,7 @@ export default class ReceivedMessageComponent extends Vue {
 
     try {
       const db = getFirestore();
-      const docRef = await addDoc(collection(db, "messages"), {content: this.answer, receiver: this.message.sender.uid, sender: this.$session.get("user").uid, product: this.message.product.id, answeredTo: this.message.id, isAnswered: false});
+      const docRef = await addDoc(collection(db, "messages"), {content: this.answer, receiver: this.message.sender.uid, sender: this.$store.state.user.uid, product: this.message.product.id, answeredTo: this.message.id, isAnswered: false});
       const docRes = await setDoc(doc(db, "messages", this.message.id), {isAnswered: true}, {merge: true});
       this.$toast({
         title: 'Reponse envoyée',

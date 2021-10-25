@@ -17,7 +17,7 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import {collection, doc, getDoc, getDocs, getFirestore, query, where} from "firebase/firestore";
-import {Message} from "@/constants";
+import {Message, Product, User} from "@/constants";
 import {CBox, CDivider, CHeading} from "@chakra-ui/vue";
 import SendedMessageComponent from "@/components/Messages/SendedMessageComponent.vue";
 import ReceivedMessageComponent from "@/components/Messages/ReceivedMessageComponent.vue";
@@ -31,14 +31,14 @@ export default class Messages extends Vue {
 
   async created(): Promise<void> {
     const db = getFirestore();
-    const q_receiver = query(collection(db, "messages"), where("receiver", "==", this.$session.get("user").uid));
+    const q_receiver = query(collection(db, "messages"), where("receiver", "==", this.$store.state.user.uid));
     const querySnapshot_receiver = await getDocs(q_receiver);
     querySnapshot_receiver.forEach(async (document) => {
       const message = document.data();
       const docProduct = await getDoc(doc(db, "products", message.product))
       const docUser = await getDoc(doc(db, "users", message.sender))
-      const product = docProduct.data();
-      const user = docUser.data();
+      const product = docProduct.data() as Product;
+      const user = docUser.data() as User;
       product.id = docProduct.id;
       user.uid = docUser.id;
       this.received_messages.push({
@@ -46,26 +46,26 @@ export default class Messages extends Vue {
         content: message.content,
         sender: user,
         product: product,
-        receiver: this.$session.get("user"),
+        receiver: this.$store.state.user,
         answeredTo: message.answeredTo,
         isAnswered: message.isAnswered
       })
     });
 
-    const q_sender = query(collection(db, "messages"), where("sender", "==", this.$session.get("user").uid));
+    const q_sender = query(collection(db, "messages"), where("sender", "==", this.$store.state.user.uid));
     const querySnapshot_sender = await getDocs(q_sender);
     querySnapshot_sender.forEach(async (document) => {
       const message = document.data();
       const docProduct = await getDoc(doc(db, "products", message.product))
       const docUser = await getDoc(doc(db, "users", message.receiver))
-      const product = docProduct.data();
-      const user = docUser.data();
+      const product = docProduct.data() as Product;
+      const user = docUser.data() as User;
       product.id = docProduct.id;
       user.uid = docUser.id;
       this.sended_messages.push({
         id: document.id,
         content: message.content,
-        sender: this.$session.get("user"),
+        sender: this.$store.state.user,
         product: product,
         receiver: user,
         answeredTo: message.answeredTo,

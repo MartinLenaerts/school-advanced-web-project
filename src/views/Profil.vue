@@ -5,19 +5,19 @@
       <c-heading text-align="center" mb="2rem">Profil</c-heading>
       <c-box class="container_field">
         <c-text class="label">Nom :</c-text>
-        <c-text class="value"> {{ this.$session.get("user").name }}</c-text>
+        <c-text class="value"> {{ getUser().name }}</c-text>
       </c-box>
       <c-box class="container_field">
         <c-text class="label">Prenom :</c-text>
-        <c-text class="value"> {{ this.$session.get("user").firstname }}</c-text>
+        <c-text class="value"> {{ getUser().firstname }}</c-text>
       </c-box>
       <c-box class="container_field">
         <c-text class="label">Email :</c-text>
-        <c-text class="value"> {{ this.$session.get("user").email }}</c-text>
+        <c-text class="value"> {{ getUser().email }}</c-text>
       </c-box>
       <c-box class="container_field">
         <c-text class="label">Rôle :</c-text>
-        <c-text class="value"> {{ this.$session.get("user").seller ? "Vendeur" : "Acheteur" }}</c-text>
+        <c-text class="value"> {{ getUser().seller ? "Vendeur" : "Acheteur" }}</c-text>
       </c-box>
     </c-box>
   </c-box>
@@ -25,11 +25,12 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {CBox, CText,CHeading} from "@chakra-ui/vue";
+import {CBox, CHeading, CText} from "@chakra-ui/vue";
+import {User} from "@/constants";
 
 @Component({
   components: {
-    CText, CBox,CHeading
+    CText, CBox, CHeading
   }
 })
 export default class Profil extends Vue {
@@ -38,6 +39,10 @@ export default class Profil extends Vue {
     this.$root.$on("sign-out", () => {
       this.$router.push("/");
     })
+  }
+
+  getUser(): User | null {
+    return this.$store.state.user;
   }
 }
 </script>

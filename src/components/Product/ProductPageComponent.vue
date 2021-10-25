@@ -11,7 +11,7 @@
         </template>
         <c-text class="description">{{ product.description }}</c-text>
         <c-badge class="price" variant-color="green">{{ product.price }} €</c-badge>
-        <template v-if="this.$session.exists() && !this.$session.get('user').seller">
+        <template v-if="getUser() && !getUser().seller">
           <c-alert-dialog
               :is-open="isOpen"
               :least-destructive-ref="$refs.cancelRef"
@@ -53,7 +53,7 @@
 
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
-import {Error, Product} from "@/constants";
+import {Error, Product, User} from "@/constants";
 import {CAlert, CAlertDialog, CAlertDialogBody, CAlertDialogContent,CTextarea, CAlertDialogFooter, CAlertDialogHeader, CAlertDialogOverlay, CAlertIcon, CBadge, CBox, CButton, CFormControl, CFormLabel, CHeading, CImage, CInput, CText} from "@chakra-ui/vue";
 import {addDoc, collection, getFirestore} from "firebase/firestore";
 
@@ -74,13 +74,18 @@ import {addDoc, collection, getFirestore} from "firebase/firestore";
   }
 })
 export default class ProductPageComponent extends Vue {
-  @Prop() private product: Product;
+  @Prop() private product!: Product;
   private message = "";
   private error: Error = {
     message: "",
     show: false
   }
   private isOpen = false;
+
+  getUser(): User | null{
+    console.log(this.$store.state.user);
+    return this.$store.state.user;
+  }
 
   private closeDialog() {
     this.isOpen = false;
@@ -101,8 +106,8 @@ export default class ProductPageComponent extends Vue {
     }
     try {
       const db = getFirestore();
-      console.log({content:this.message,user:this.product.seller.uid});
-      const docRef = await addDoc(collection(db, "messages"), {content:this.message,receiver:this.product.seller.uid,sender:this.$session.get("user").uid,product:this.product?.id,isAnswered:false});
+      console.log({content:this.message,user:this.product?.seller.uid});
+      const docRef = await addDoc(collection(db, "messages"), {content:this.message,receiver:this.product?.seller.uid,sender:this.$store.state.user.uid,product:this.product?.id,isAnswered:false});
       this.$toast({
         title: 'Message envoyé',
         description: "Votre message à bien été envoyé",

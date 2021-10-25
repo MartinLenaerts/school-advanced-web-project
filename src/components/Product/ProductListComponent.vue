@@ -21,7 +21,7 @@ import {CBadge, CBox, CHeading, CImage, CText} from "@chakra-ui/vue";
   components: {CBox, CText, CHeading, CImage, CBadge}
 })
 export default class ProductListComponent extends Vue {
-  @Prop() private product: Product | undefined;
+  @Prop() private product!: Product;
 
 }
 </script>

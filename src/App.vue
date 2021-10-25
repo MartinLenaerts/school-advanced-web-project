@@ -6,10 +6,11 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from "vue-property-decorator";
-import Home from "@/views/Home";
-import NavBar from "@/components/NavBar";
+import {Component, ProvideReactive, Vue, Watch} from "vue-property-decorator";
+import Home from "@/views/Home.vue";
+import NavBar from "@/components/NavBar.vue";
 import {CBox} from "@chakra-ui/vue";
+import {User} from "@/constants";
 
 @Component({
   components: {
@@ -17,8 +18,12 @@ import {CBox} from "@chakra-ui/vue";
   }
 })
 export default class App extends Vue {
+  @ProvideReactive("error") message: string | null = null;
+
+
 
   mounted() : void{
+    console.log(this.$store.state);
     this.$root.$on("sign-out",()=>{
       if(this.$route.name != "Home")this.$router.push("/")
       this.$toast({

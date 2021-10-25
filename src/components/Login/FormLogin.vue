@@ -29,10 +29,10 @@
 </template>
 
 <script lang="ts">
-import {Component, Emit, Vue} from "vue-property-decorator";
+import {Component, Emit, InjectReactive, Vue} from "vue-property-decorator";
 import {CAlert, CAlertIcon, CBox, CButton, CFormControl, CFormLabel, CInput, CText} from "@chakra-ui/vue";
 import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
-import {getDoc, doc, getFirestore} from "firebase/firestore";
+import {doc, getDoc, getFirestore} from "firebase/firestore";
 import {FirebaseError} from "@firebase/app";
 import {Error, getError} from "@/constants";
 
@@ -48,30 +48,32 @@ export default class FormLogin extends Vue {
     show: false,
     message: "no error"
   };
+  @InjectReactive("message") message!: string
 
-  @Emit()
-  async signIn() : Promise<void> {
+
+  created(): void {
+    console.log(this.message)
+  }
+
+  @Emit("sign-in")
+  async signIn(): Promise<void> {
     if (this.email != "" && this.password != "") {
       try {
-        const firebaseAuth = getAuth();
-        const db = getFirestore();
-        const userCredential = await signInWithEmailAndPassword(firebaseAuth, this.email, this.password);
-        const docRef = doc(db, "users", userCredential.user.uid);
+        const {user} = await signInWithEmailAndPassword(getAuth(), this.email, this.password);
+        const docRef = doc(getFirestore(), "users", user.uid);
         const docSnap = await getDoc(docRef);
-        this.$session.start();
-        this.$session.set("user",{...userCredential.user,...docSnap.data()});
-        this.$root.$emit("sign-in","sign-in");
+        this.$store.commit("setUser", {...user, ...docSnap.data()})
         await this.$router.push('/');
-      } catch (error: FirebaseError) {
+      } catch (error) {
         console.log(error);
-        this.error = getError(error);
+        this.error = getError(error as FirebaseError);
       }
     } else {
       this.error = {
         show: true,
         message: "Veuillez entrer un email et un mot de passe "
       }
-      }
+    }
   }
 }
 </script>

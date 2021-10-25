@@ -41,7 +41,7 @@ export default class Home extends Vue {
       const product = document.data();
       const docRef = doc(db, "users", product.seller);
       const docSnap = await getDoc(docRef);
-      const seller = docSnap.exists() ? docSnap.data() as User : null;
+      const seller : User = docSnap.exists() ? docSnap.data() as User : {} as User;
       seller.uid = docSnap.id;
       console.log(seller);
       this.products.push({

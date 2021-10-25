@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import VueRouter, {NavigationGuardNext, RouteConfig} from 'vue-router'
 import Home from '../views/Home.vue'
-
+import store from "@/utils/store"
 Vue.use(VueRouter)
 
 function loggedIn(next : NavigationGuardNext<Vue>){
-    const session = Vue.prototype.$session;
-    if (session.exists()) {
+    const user = store.state.user;
+    if (user) {
         next("/")
     } else next();
 }
@@ -38,8 +38,8 @@ const routes: Array<RouteConfig> = [
         name: "Profil",
         component: () => import(/* webpackChunkName: "about" */ '../views/Profil.vue'),
         beforeEnter(to, from, next) {
-            const session = Vue.prototype.$session;
-            if (session.exists()) {
+            const user = store.state.user;
+            if (user) {
                 next()
             } else next("/");
         }
@@ -49,8 +49,8 @@ const routes: Array<RouteConfig> = [
         name: "Ads",
         component: () => import(/* webpackChunkName: "about" */ '../views/Ads.vue'),
         beforeEnter(to, from, next) {
-            const session = Vue.prototype.$session;
-            if (session.exists()) {
+            const user = store.state.user;
+            if (user) {
                 next()
             } else next("/");
         }
@@ -66,8 +66,8 @@ const routes: Array<RouteConfig> = [
         name: "Messages",
         component: () => import(/* webpackChunkName: "about" */ '../views/Messages.vue'),
         beforeEnter(to, from, next) {
-            const session = Vue.prototype.$session;
-            if (session.exists()) {
+            const user = store.state.user;
+            if (user) {
                 next()
             } else next("/");
         }

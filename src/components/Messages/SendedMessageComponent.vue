@@ -22,7 +22,7 @@ import {CBox, CButton, CText} from "@chakra-ui/vue";
   }
 })
 export default class SendedMessageComponent extends Vue {
-  @Prop() private message: Message;
+  @Prop() private message!: Message;
 }
 </script>
 

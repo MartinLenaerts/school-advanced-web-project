@@ -99,9 +99,9 @@ export default class FormRegister extends Vue {
         } catch (e) {
           console.error("Error adding document: ", e);
         }
-      } catch (error: FirebaseError) {
+      } catch (error) {
         console.log(error);
-        this.error = getError(error)
+        this.error = getError(error as FirebaseError)
         console.log(this.error);
       }
     } else {

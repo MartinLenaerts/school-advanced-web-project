@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import App from './App.vue'
-import router from './router'
 import Chakra, {CBox, CColorModeProvider, CReset, CThemeProvider} from "@chakra-ui/vue";
 import {initializeApp} from 'firebase/app';
 import {getFirestore} from "firebase/firestore";
-import VueSession from 'vue-session';
+import router from './router'
+import store from "@/utils/store";
+
 
 const firebaseConfig = {
     apiKey: process.env.VUE_APP_API_KEY,
@@ -37,8 +38,8 @@ const icons = {
 
 Vue.config.productionTip = false
 Vue.use(Chakra, {icons: {extend: {...icons}}});
-Vue.use(VueSession);
 const app = new Vue({
+    store,
     router,
     render: (h) => h(CThemeProvider, [
         h(CColorModeProvider, [
