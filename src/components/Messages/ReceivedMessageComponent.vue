@@ -9,46 +9,46 @@
       <c-text class="content">{{ message.content }}</c-text>
     </c-box>
     <c-box>
-      <template v-if="message.answeredTo">
-      <c-alert-dialog
-          :is-open="isOpen"
-          :least-destructive-ref="$refs.cancelRef"
-          :on-close="closeDialog"
-      >
-        <c-alert-dialog-overlay/>
-        <c-alert-dialog-content>
-          <c-alert-dialog-header font-size="lg" font-weight="bold">
-            Répondre au message
-          </c-alert-dialog-header>
-          <c-alert-dialog-body>
-            <c-alert status="error" v-show="error.show" mb="1rem">
-              <c-alert-icon/>
-              {{ error.message }}
-            </c-alert>
-
-            <c-box mb="1rem">
-              <c-text>Message : </c-text>
-              <c-text color="grey">{{message.content}}</c-text>
-            </c-box>
-            <c-form-control class="container_field" is-required>
-              <c-form-label>Votre reponse :</c-form-label>
-              <c-textarea v-model="answer"/>
-            </c-form-control>
-          </c-alert-dialog-body>
-          <c-alert-dialog-footer>
-            <c-button ref="cancelRef" @click="closeDialog">
-              Annuler
-            </c-button>
-            <c-button variantColor="green" @click="to_answer" ml="3">
-              Envoyer le message
-            </c-button>
-          </c-alert-dialog-footer>
-        </c-alert-dialog-content>
-      </c-alert-dialog>
-      <c-button class="button_to_answer" @click="openDialog">Répondre</c-button>
+      <template v-if="message.isAnswered">
+        <c-button class="button_to_answer" disabled>Répondu</c-button>
       </template>
       <template v-else>
-        <c-button class="button_to_answer" disabled>Répondu</c-button>
+        <c-alert-dialog
+            :is-open="isOpen"
+            :least-destructive-ref="$refs.cancelRef"
+            :on-close="closeDialog"
+        >
+          <c-alert-dialog-overlay/>
+          <c-alert-dialog-content>
+            <c-alert-dialog-header font-size="lg" font-weight="bold">
+              Répondre au message
+            </c-alert-dialog-header>
+            <c-alert-dialog-body>
+              <c-alert status="error" v-show="error.show" mb="1rem">
+                <c-alert-icon/>
+                {{ error.message }}
+              </c-alert>
+
+              <c-box mb="1rem">
+                <c-text>Message :</c-text>
+                <c-text color="grey">{{ message.content }}</c-text>
+              </c-box>
+              <c-form-control class="container_field" is-required>
+                <c-form-label>Votre reponse :</c-form-label>
+                <c-textarea v-model="answer"/>
+              </c-form-control>
+            </c-alert-dialog-body>
+            <c-alert-dialog-footer>
+              <c-button ref="cancelRef" @click="closeDialog">
+                Annuler
+              </c-button>
+              <c-button variantColor="green" @click="to_answer" ml="3">
+                Envoyer le message
+              </c-button>
+            </c-alert-dialog-footer>
+          </c-alert-dialog-content>
+        </c-alert-dialog>
+        <c-button class="button_to_answer" @click="openDialog">Répondre</c-button>
       </template>
     </c-box>
   </c-box>
@@ -58,7 +58,7 @@
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {Error, Message} from "@/constants";
 import {CAlert, CAlertDialog, CAlertDialogBody, CAlertDialogContent, CAlertDialogFooter, CAlertDialogHeader, CAlertDialogOverlay, CAlertIcon, CBox, CButton, CFormControl, CFormLabel, CText, CTextarea} from "@chakra-ui/vue";
-import {addDoc, collection, getFirestore} from "firebase/firestore";
+import {addDoc, collection, doc, getFirestore, setDoc} from "firebase/firestore";
 
 @Component({
   components: {
@@ -79,7 +79,6 @@ import {addDoc, collection, getFirestore} from "firebase/firestore";
 export default class ReceivedMessageComponent extends Vue {
   @Prop() private message: Message;
 
-
   private answer = "";
   private error: Error = {
     message: "",
@@ -95,7 +94,7 @@ export default class ReceivedMessageComponent extends Vue {
     this.isOpen = true;
   }
 
-  private async to_answer(): boolean {
+  private async to_answer(): Promise<boolean> {
     this.error = {
       show: false,
       message: ""
@@ -107,7 +106,8 @@ export default class ReceivedMessageComponent extends Vue {
 
     try {
       const db = getFirestore();
-      const docRef = await addDoc(collection(db, "messages"), {content:this.answer,receiver:this.message.sender.uid,sender:this.$session.get("user").uid,product:this.message.product.id,answeredTo:this.message.id});
+      const docRef = await addDoc(collection(db, "messages"), {content: this.answer, receiver: this.message.sender.uid, sender: this.$session.get("user").uid, product: this.message.product.id, answeredTo: this.message.id, isAnswered: false});
+      const docRes = await setDoc(doc(db, "messages", this.message.id), {isAnswered: true}, {merge: true});
       this.$toast({
         title: 'Reponse envoyée',
         description: "Votre reponse à bien été envoyée",
@@ -115,8 +115,10 @@ export default class ReceivedMessageComponent extends Vue {
         duration: 10000
       })
       this.isOpen = false;
+      return true
     } catch (e) {
       console.error("Error adding document: ", e);
+      return false;
     }
   }
 

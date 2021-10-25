@@ -35,7 +35,6 @@ import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
 import {getDoc, doc, getFirestore} from "firebase/firestore";
 import {FirebaseError} from "@firebase/app";
 import {Error, getError} from "@/constants";
-import NavBar from "@/components/NavBar.vue";
 
 @Component({
   components: {

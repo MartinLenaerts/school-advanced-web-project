@@ -64,7 +64,7 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {Error, Product} from "@/constants";
+import {Error, Product, User} from "@/constants";
 import {collection, doc, getDocs, getFirestore, query, addDoc, where} from "firebase/firestore";
 import {
   CAlert,
@@ -140,7 +140,7 @@ export default class Ads extends Vue {
         id: doc.id,
         name: product.name,
         price: product.price,
-        seller: null,
+        seller: {} as User,
         description: product.description,
         image_ref: product.image_ref,
       })
@@ -155,7 +155,7 @@ export default class Ads extends Vue {
     this.isOpen = true;
   }
 
-  private async addAds():boolean{
+  private async addAds(): Promise<boolean>{
     this.error = {
       show : false,
       message:""
@@ -166,14 +166,13 @@ export default class Ads extends Vue {
     }else if(this.newProduct.description == ""){
       this.error = {show:true,message:"Veuillez entrer une description pour cette annonce"};
       return false;
-    }else if(this.newProduct.price == ""){
+    }else if(this.newProduct.price == 0){
       this.error = {show:true,message:"Veuillez entrer un prix pour cette annonce"};
       return false;
     }else if(this.newProduct.image_ref == ""){
       this.error = {show:true,message:"Veuillez entrer une image pour cette annonce"};
       return false;
     }
-    console.log(this.error)
     try {
       const db = getFirestore();
       const docRef = await addDoc(collection(db, "products"), this.newProduct);
@@ -185,8 +184,10 @@ export default class Ads extends Vue {
       })
       this.isOpen = false;
       this.$forceUpdate();
+      return true;
     } catch (e) {
       console.error("Error adding document: ", e);
+      return false;
     }
   }
 }
