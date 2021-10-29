@@ -26,14 +26,14 @@ import ReceivedMessageComponent from "@/components/Messages/ReceivedMessageCompo
   components: {CBox, SendedMessageComponent, ReceivedMessageComponent, CHeading, CDivider}
 })
 export default class Messages extends Vue {
-  private received_messages: Message[] = [];
-  private sended_messages: Message[] = [];
+  received_messages: Message[] = [];
+  sended_messages: Message[] = [];
 
   async created(): Promise<void> {
     const db = getFirestore();
     const q_receiver = query(collection(db, "messages"), where("receiver", "==", this.$store.state.user.uid));
     const querySnapshot_receiver = await getDocs(q_receiver);
-    querySnapshot_receiver.forEach(async (document) => {
+    for (const document of querySnapshot_receiver.docs) {
       const message = document.data();
       const docProduct = await getDoc(doc(db, "products", message.product))
       const docUser = await getDoc(doc(db, "users", message.sender))
@@ -50,11 +50,11 @@ export default class Messages extends Vue {
         answeredTo: message.answeredTo,
         isAnswered: message.isAnswered
       })
-    });
+    }
 
     const q_sender = query(collection(db, "messages"), where("sender", "==", this.$store.state.user.uid));
     const querySnapshot_sender = await getDocs(q_sender);
-    querySnapshot_sender.forEach(async (document) => {
+    for (const document of querySnapshot_sender.docs) {
       const message = document.data();
       const docProduct = await getDoc(doc(db, "products", message.product))
       const docUser = await getDoc(doc(db, "users", message.receiver))
@@ -71,7 +71,7 @@ export default class Messages extends Vue {
         answeredTo: message.answeredTo,
         isAnswered: message.isAnswered
       })
-    });
+    }
   }
 }
 </script>

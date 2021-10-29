@@ -32,7 +32,7 @@ export default class Connection extends Vue {
   padding: 2rem;
 }
 
-#container_login{
+#container_login {
   display: flex;
 }
 </style>

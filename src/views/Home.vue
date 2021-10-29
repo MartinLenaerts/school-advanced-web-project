@@ -31,19 +31,17 @@ import {collection, doc, getDoc, getDocs, getFirestore} from "firebase/firestore
       }
     })
 export default class Home extends Vue {
-  private products: Product[] = [];
+  products: Product[] = [];
 
-  async created() : Promise<void>{
+  async created(): Promise<void> {
     console.count("created")
-    const db = getFirestore();
-    const collectionSnap = await getDocs(collection(db, "products"));
-    await collectionSnap.forEach(async (document) : Promise<void> => {
+    const collectionSnap = await getDocs(collection(getFirestore(), "products"));
+
+    for (const document of collectionSnap.docs) {
       const product = document.data();
-      const docRef = doc(db, "users", product.seller);
-      const docSnap = await getDoc(docRef);
-      const seller : User = docSnap.exists() ? docSnap.data() as User : {} as User;
+      const docSnap = await getDoc(doc(getFirestore(), "users", product.seller));
+      const seller: User = docSnap.exists() ? docSnap.data() as User : {} as User;
       seller.uid = docSnap.id;
-      console.log(seller);
       this.products.push({
         id: document.id,
         name: product.name,
@@ -52,7 +50,7 @@ export default class Home extends Vue {
         description: product.description,
         image_ref: product.image_ref,
       })
-    });
+    }
   }
 }
 </script>

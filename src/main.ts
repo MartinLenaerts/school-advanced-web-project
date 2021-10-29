@@ -5,17 +5,13 @@ import {initializeApp} from 'firebase/app';
 import router from './router'
 import store from "@/utils/store";
 import svgIcons from "@/utils/svgIcons";
-
-
-const firebaseConfig = {
-    apiKey: process.env.VUE_APP_API_KEY,
-    authDomain: process.env.VUE_APP_AUTH_DOMAIN,
-    projectId: process.env.VUE_APP_PROJET_ID
-};
+import {handleError} from "@/constants";
+import firebaseConfig from "@/utils/firebase.config";
 
 initializeApp(firebaseConfig);
 
 Vue.config.productionTip = false
+Vue.config.errorHandler = handleError;
 Vue.use(Chakra, {icons: {extend: {...svgIcons}}});
 new Vue({
     store,

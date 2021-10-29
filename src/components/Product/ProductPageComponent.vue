@@ -1,5 +1,5 @@
 <template>
-  <c-box class="product_page_container" pl="5rem" pr="5rem" >
+  <c-box class="product_page_container" pl="5rem" pr="5rem">
     <c-heading class="name">{{ product.name }}</c-heading>
     <c-box class="product_container">
       <c-box class="image_container">
@@ -23,10 +23,7 @@
                 Nouvelle Annonce
               </c-alert-dialog-header>
               <c-alert-dialog-body>
-                <c-alert status="error" v-show="error.show" mb="1rem">
-                  <c-alert-icon/>
-                  {{ error.message }}
-                </c-alert>
+                <error-component/>
                 <c-form-control class="container_field" is-required>
                   <c-form-label>Votre message :</c-form-label>
                   <c-textarea v-model="message"/>
@@ -53,12 +50,14 @@
 
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
-import {Error, Product, User} from "@/constants";
+import {Product, User} from "@/constants";
 import {CAlert, CAlertDialog, CAlertDialogBody, CAlertDialogContent, CAlertDialogFooter, CAlertDialogHeader, CAlertDialogOverlay, CAlertIcon, CBadge, CBox, CButton, CFormControl, CFormLabel, CHeading, CImage, CText, CTextarea} from "@chakra-ui/vue";
 import {addDoc, collection, getFirestore} from "firebase/firestore";
+import ErrorComponent from "@/components/Error/ErrorComponent.vue";
 
 @Component({
   components: {
+    ErrorComponent,
     CBox, CText, CImage, CHeading, CBadge, CButton,
     CAlertDialog,
     CAlertDialogOverlay,
@@ -75,15 +74,10 @@ import {addDoc, collection, getFirestore} from "firebase/firestore";
 })
 export default class ProductPageComponent extends Vue {
   @Prop() private product!: Product;
-  private message = "";
-  private error: Error = {
-    message: "",
-    show: false
-  }
-  private isOpen = false;
+  message = "";
+  isOpen = false;
 
-  getUser(): User | null{
-    console.log(this.$store.state.user);
+  getUser(): User | null {
     return this.$store.state.user;
   }
 
@@ -96,30 +90,17 @@ export default class ProductPageComponent extends Vue {
   }
 
   private async buy(): Promise<boolean> {
-    this.error = {
-      show: false,
-      message: ""
-    }
-    if (this.message == "") {
-      this.error = {show: true, message: "Veuillez entrer un message"};
-      return false;
-    }
-    try {
-      const db = getFirestore();
-      console.log({content:this.message,user:this.product?.seller.uid});
-      await addDoc(collection(db, "messages"), {content:this.message,receiver:this.product?.seller.uid,sender:this.$store.state.user.uid,product:this.product?.id,isAnswered:false});
-      this.$toast({
-        title: 'Message envoyé',
-        description: "Votre message à bien été envoyé",
-        status: 'success',
-        duration: 10000
-      })
-      this.isOpen = false;
-      return true;
-    } catch (e) {
-      console.error("Error adding document: ", e);
-      return false;
-    }
+    if (this.message == "") throw new Error("Veuillez entrer un message");
+    const db = getFirestore();
+    await addDoc(collection(db, "messages"), {content: this.message, receiver: this.product?.seller.uid, sender: this.$store.state.user.uid, product: this.product?.id, isAnswered: false});
+    this.$toast({
+      title: 'Message envoyé',
+      description: "Votre message à bien été envoyé",
+      status: 'success',
+      duration: 10000
+    })
+    this.isOpen = false;
+    return true;
   }
 }
 </script>
@@ -152,7 +133,7 @@ export default class ProductPageComponent extends Vue {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  flex:50%;
+  flex: 50%;
 }
 
 .price {
@@ -161,7 +142,7 @@ export default class ProductPageComponent extends Vue {
   padding: 1rem;
 }
 
-.description{
+.description {
   line-height: 2;
 }
 </style>

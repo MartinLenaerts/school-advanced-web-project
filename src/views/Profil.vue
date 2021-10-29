@@ -17,7 +17,7 @@
       </c-box>
       <c-box class="container_field">
         <c-text class="label">Rôle :</c-text>
-        <c-text class="value"> {{ getUser().seller ? "Vendeur" : "Acheteur" }}</c-text>
+        <c-text class="value"> {{ getUser().seller ? "seller" : "buyer" }}</c-text>
       </c-box>
     </c-box>
   </c-box>
