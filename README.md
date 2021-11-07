@@ -3,6 +3,7 @@
 ## Table of Content
 
 - [Authors](#authors)
+- [Demo Video](#demo-video)
 - [Website url](#project-deployment)
 - [Project setup](#project-setup)
   - [Compiles and hot-reloads for development](#compiles-and-hot-reloads-for-development)
