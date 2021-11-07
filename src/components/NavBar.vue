@@ -49,7 +49,6 @@ import {User} from "@/constants";
 export default class NavBar extends Vue {
 
   getUser(): User | null {
-    console.log(this.$store.state);
     return this.$store.state.user;
   }
 
