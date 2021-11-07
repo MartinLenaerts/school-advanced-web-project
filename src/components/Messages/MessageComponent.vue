@@ -1,7 +1,7 @@
 <template>
   <c-box class="container_message" shadow="md" p="1rem" m="1rem">
     <c-box>
-      <c-text class="sender">Message de : <span>{{ message.sender.firstname }} {{ message.sender.name }}</span></c-text>
+      <c-text class="sender">Message {{ getMessageHeader().label }} : <span> {{ getMessageHeader().userInfos }}</span></c-text>
       <c-text class="product">Produit concerné : <span>{{ message.product.name }}</span></c-text>
     </c-box>
     <c-box>
@@ -9,6 +9,7 @@
       <c-text class="content">{{ message.content }}</c-text>
     </c-box>
     <c-box>
+      <template v-if="!isSender">
       <c-button class="button_to_answer" v-if="message.isAnswered" disabled>Répondu</c-button>
       <template v-else>
         <c-alert-dialog
@@ -45,6 +46,7 @@
         </c-alert-dialog>
         <c-button class="button_to_answer" @click="openDialog">Répondre</c-button>
       </template>
+      </template>
     </c-box>
   </c-box>
 </template>
@@ -75,8 +77,20 @@ import ErrorComponent from "@/components/Error/ErrorComponent.vue";
 })
 export default class ReceivedMessageComponent extends Vue {
   @Prop() private message!: Message;
+  @Prop() private isSender! : boolean;
   answer = "";
   isOpen = false;
+
+
+  getMessageHeader() {
+    return this.isSender ?
+        { label : " envoyé à ",
+          userInfos: this.message.receiver.firstname + " " + this.message.receiver.name
+        }:
+        { label : " de ",
+          userInfos: this.message.sender.firstname + " " + this.message.sender.name
+        };
+  }
 
   private closeDialog() {
     this.isOpen = false;
