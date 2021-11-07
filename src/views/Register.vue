@@ -3,7 +3,7 @@
     <c-heading text-align="center" padding-bottom="1rem">Sign up</c-heading>
     <c-box id="container_login">
       <c-box id="container_form_login" shadow="md">
-        <form-register />
+        <form-register/>
       </c-box>
     </c-box>
   </c-box>

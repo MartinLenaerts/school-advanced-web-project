@@ -1,12 +1,17 @@
 import Vue from 'vue'
 import VueRouter, {NavigationGuardNext, RouteConfig} from 'vue-router'
 import Home from '../views/Home.vue'
+import Connection from '../views/Connection.vue'
+import Register from '../views/Register.vue'
+import Profil from '../views/Profil.vue'
+import Ads from '../views/Ads.vue'
+import store from "@/utils/store"
 
 Vue.use(VueRouter)
 
-function loggedIn(next : NavigationGuardNext<Vue>){
-    const session = Vue.prototype.$session;
-    if (session.exists()) {
+function loggedIn(next: NavigationGuardNext<Vue>) {
+    const user = store.state.user;
+    if (user) {
         next("/")
     } else next();
 }
@@ -20,7 +25,7 @@ const routes: Array<RouteConfig> = [
     {
         path: '/sign-in',
         name: 'SignIn',
-        component: () => import(/* webpackChunkName: "about" */ '../views/Connection.vue'),
+        component: Connection,
         beforeEnter(to, from, next) {
             loggedIn(next);
         }
@@ -28,7 +33,7 @@ const routes: Array<RouteConfig> = [
     {
         path: '/register',
         name: 'Register',
-        component: () => import(/* webpackChunkName: "about" */ '../views/Register.vue'),
+        component: Register,
         beforeEnter(to, from, next) {
             loggedIn(next);
         }
@@ -36,10 +41,10 @@ const routes: Array<RouteConfig> = [
     {
         path: '/profil',
         name: "Profil",
-        component: () => import(/* webpackChunkName: "about" */ '../views/Profil.vue'),
+        component: Profil,
         beforeEnter(to, from, next) {
-            const session = Vue.prototype.$session;
-            if (session.exists()) {
+            const user = store.state.user;
+            if (user) {
                 next()
             } else next("/");
         }
@@ -47,10 +52,10 @@ const routes: Array<RouteConfig> = [
     {
         path: '/ads',
         name: "Ads",
-        component: () => import(/* webpackChunkName: "about" */ '../views/Ads.vue'),
+        component: Ads,
         beforeEnter(to, from, next) {
-            const session = Vue.prototype.$session;
-            if (session.exists()) {
+            const user = store.state.user;
+            if (user) {
                 next()
             } else next("/");
         }
@@ -59,15 +64,15 @@ const routes: Array<RouteConfig> = [
         path: '/product/:id',
         name: "Product",
         component: () => import(/* webpackChunkName: "about" */ '../views/ProductView.vue'),
-        props:true
+        props: true
     },
     {
         path: '/messages',
         name: "Messages",
         component: () => import(/* webpackChunkName: "about" */ '../views/Messages.vue'),
         beforeEnter(to, from, next) {
-            const session = Vue.prototype.$session;
-            if (session.exists()) {
+            const user = store.state.user;
+            if (user) {
                 next()
             } else next("/");
         }

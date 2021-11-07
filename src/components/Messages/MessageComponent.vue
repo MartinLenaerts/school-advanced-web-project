@@ -1,7 +1,7 @@
 <template>
   <c-box class="container_message" shadow="md" p="1rem" m="1rem">
     <c-box>
-      <c-text class="sender">Message de : <span>{{ message.sender.firstname }} {{ message.sender.name }}</span></c-text>
+      <c-text class="sender">Message {{ getMessageHeader().label }} : <span> {{ getMessageHeader().userInfos }}</span></c-text>
       <c-text class="product">Produit concerné : <span>{{ message.product.name }}</span></c-text>
     </c-box>
     <c-box>
@@ -9,9 +9,8 @@
       <c-text class="content">{{ message.content }}</c-text>
     </c-box>
     <c-box>
-      <template v-if="message.isAnswered">
-        <c-button class="button_to_answer" disabled>Répondu</c-button>
-      </template>
+      <template v-if="!isSender">
+      <c-button class="button_to_answer" v-if="message.isAnswered" disabled>Répondu</c-button>
       <template v-else>
         <c-alert-dialog
             :is-open="isOpen"
@@ -24,10 +23,7 @@
               Répondre au message
             </c-alert-dialog-header>
             <c-alert-dialog-body>
-              <c-alert status="error" v-show="error.show" mb="1rem">
-                <c-alert-icon/>
-                {{ error.message }}
-              </c-alert>
+              <error-component/>
 
               <c-box mb="1rem">
                 <c-text>Message :</c-text>
@@ -42,7 +38,7 @@
               <c-button ref="cancelRef" @click="closeDialog">
                 Annuler
               </c-button>
-              <c-button variantColor="green" @click="to_answer" ml="3">
+              <c-button variantColor="green" @click="toAnswer" ml="3">
                 Envoyer le message
               </c-button>
             </c-alert-dialog-footer>
@@ -50,18 +46,21 @@
         </c-alert-dialog>
         <c-button class="button_to_answer" @click="openDialog">Répondre</c-button>
       </template>
+      </template>
     </c-box>
   </c-box>
 </template>
 
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
-import {Error, Message} from "@/constants";
+import {Message} from "@/constants";
 import {CAlert, CAlertDialog, CAlertDialogBody, CAlertDialogContent, CAlertDialogFooter, CAlertDialogHeader, CAlertDialogOverlay, CAlertIcon, CBox, CButton, CFormControl, CFormLabel, CText, CTextarea} from "@chakra-ui/vue";
 import {addDoc, collection, doc, getFirestore, setDoc} from "firebase/firestore";
+import ErrorComponent from "@/components/Error/ErrorComponent.vue";
 
 @Component({
   components: {
+    ErrorComponent,
     CBox, CText, CButton,
     CAlertDialog,
     CAlertDialogOverlay,
@@ -77,14 +76,21 @@ import {addDoc, collection, doc, getFirestore, setDoc} from "firebase/firestore"
   }
 })
 export default class ReceivedMessageComponent extends Vue {
-  @Prop() private message: Message;
+  @Prop() private message!: Message;
+  @Prop() private isSender! : boolean;
+  answer = "";
+  isOpen = false;
 
-  private answer = "";
-  private error: Error = {
-    message: "",
-    show: false
+
+  getMessageHeader() {
+    return this.isSender ?
+        { label : " envoyé à ",
+          userInfos: this.message.receiver.firstname + " " + this.message.receiver.name
+        }:
+        { label : " de ",
+          userInfos: this.message.sender.firstname + " " + this.message.sender.name
+        };
   }
-  private isOpen = false;
 
   private closeDialog() {
     this.isOpen = false;
@@ -94,32 +100,28 @@ export default class ReceivedMessageComponent extends Vue {
     this.isOpen = true;
   }
 
-  private async to_answer(): Promise<boolean> {
-    this.error = {
-      show: false,
-      message: ""
-    }
-    if (this.answer == "") {
-      this.error = {show: true, message: "Veuillez entrer un message"};
-      return false;
-    }
+  private async toAnswer(): Promise<boolean> {
+    if (this.answer == "") throw new Error("Veuillez entrer un message");
 
-    try {
-      const db = getFirestore();
-      const docRef = await addDoc(collection(db, "messages"), {content: this.answer, receiver: this.message.sender.uid, sender: this.$session.get("user").uid, product: this.message.product.id, answeredTo: this.message.id, isAnswered: false});
-      const docRes = await setDoc(doc(db, "messages", this.message.id), {isAnswered: true}, {merge: true});
-      this.$toast({
-        title: 'Reponse envoyée',
-        description: "Votre reponse à bien été envoyée",
-        status: 'success',
-        duration: 10000
-      })
-      this.isOpen = false;
-      return true
-    } catch (e) {
-      console.error("Error adding document: ", e);
-      return false;
-    }
+    const db = getFirestore();
+    await addDoc(collection(db, "messages"), {
+      content: this.answer,
+      receiver: this.message.sender.uid,
+      sender: this.$store.state.user.uid,
+      product: this.message.product.id,
+      answeredTo: this.message.id,
+      isAnswered: false
+    });
+    await setDoc(doc(db, "messages", this.message.id), {isAnswered: true}, {merge: true});
+    this.$toast({
+      title: 'Reponse envoyée',
+      description: "Votre reponse à bien été envoyée",
+      status: 'success',
+      duration: 10000
+    });
+    this.message.isAnswered = true;
+    this.isOpen = false;
+    return true
   }
 
 }

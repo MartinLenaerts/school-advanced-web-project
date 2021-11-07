@@ -12,10 +12,7 @@
           Nouvelle Annonce
         </c-alert-dialog-header>
         <c-alert-dialog-body>
-          <c-alert status="error" v-show="error.show" mb="1rem">
-            <c-alert-icon/>
-            {{ error.message }}
-          </c-alert>
+          <error-component/>
 
           <c-form-control class="container_field" is-required>
             <c-form-label>Nom :</c-form-label>
@@ -64,8 +61,8 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {Error, Product, User} from "@/constants";
-import {collection, doc, getDocs, getFirestore, query, addDoc, where} from "firebase/firestore";
+import {Product, User} from "@/constants";
+import {addDoc, collection, getDocs, getFirestore, query, where} from "firebase/firestore";
 import {
   CAlert,
   CAlertDialog,
@@ -89,9 +86,11 @@ import {
   CTextarea
 } from "@chakra-ui/vue";
 import ProductListComponent from "@/components/Product/ProductListComponent.vue";
+import ErrorComponent from "@/components/Error/ErrorComponent.vue";
 
 @Component({
   components: {
+    ErrorComponent,
     CBox,
     CHeading,
     CTextarea,
@@ -116,23 +115,19 @@ import ProductListComponent from "@/components/Product/ProductListComponent.vue"
   }
 })
 export default class Ads extends Vue {
-  private products: Product[] = [];
-  private isOpen = false;
-  private error: Error = {
-    show: false,
-    message: ""
-  }
-  private newProduct: Product = {
+  products: Product[] = [];
+  isOpen = false;
+  newProduct: Product = {
     id: "",
     name: "",
     price: 0,
-    seller: this.$session.get("user").uid,
+    seller: this.$store.state.user.uid,
     description: "",
     image_ref: "",
   }
 
   async mounted(): Promise<void> {
-    const q = query(collection(getFirestore(), "products"), where("seller", "==", this.$session.get("user").uid));
+    const q = query(collection(getFirestore(), "products"), where("seller", "==", this.$store.state.user.uid));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       const product = doc.data();
@@ -155,40 +150,21 @@ export default class Ads extends Vue {
     this.isOpen = true;
   }
 
-  private async addAds(): Promise<boolean>{
-    this.error = {
-      show : false,
-      message:""
-    }
-    if(this.newProduct.name == ""){
-      this.error = {show:true,message:"Veuillez entrer un nom pour cette annonce"};
-      return false;
-    }else if(this.newProduct.description == ""){
-      this.error = {show:true,message:"Veuillez entrer une description pour cette annonce"};
-      return false;
-    }else if(this.newProduct.price == 0){
-      this.error = {show:true,message:"Veuillez entrer un prix pour cette annonce"};
-      return false;
-    }else if(this.newProduct.image_ref == ""){
-      this.error = {show:true,message:"Veuillez entrer une image pour cette annonce"};
-      return false;
-    }
-    try {
-      const db = getFirestore();
-      const docRef = await addDoc(collection(db, "products"), this.newProduct);
-      this.$toast({
-        title: 'Nouvelle Annonce',
-        description: "Votre annonce à bien été créée",
-        status: 'success',
-        duration: 10000
-      })
-      this.isOpen = false;
-      this.$forceUpdate();
-      return true;
-    } catch (e) {
-      console.error("Error adding document: ", e);
-      return false;
-    }
+  private async addAds(): Promise<boolean> {
+    if (this.newProduct.name == "") throw new Error("Veuillez entrer un nom pour cette annonce");
+    if (this.newProduct.description == "") throw new Error("Veuillez entrer une description pour cette annonce");
+    if (this.newProduct.price == 0) throw new Error("Veuillez entrer un prix pour cette annonce");
+    if (this.newProduct.image_ref == "") throw new Error("Veuillez entrer une image pour cette annonce");
+    await addDoc(collection(getFirestore(), "products"), this.newProduct);
+    this.$toast({
+      title: 'Nouvelle Annonce',
+      description: "Votre annonce à bien été créée",
+      status: 'success',
+      duration: 10000
+    })
+    this.isOpen = false;
+    this.$forceUpdate();
+    return true;
   }
 }
 </script>
@@ -198,7 +174,7 @@ export default class Ads extends Vue {
   margin: 1rem 5rem 1rem 5rem;
 }
 
-.container_field{
+.container_field {
   margin: 1rem;
 }
 </style>

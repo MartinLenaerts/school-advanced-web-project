@@ -5,24 +5,24 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import ProductPageComponent from "@/components/Product/ProductPageComponent.vue";
-import {collection, doc, getDoc, getFirestore} from "firebase/firestore";
-import {User,Product} from "@/constants";
+import {doc, getDoc, getFirestore} from "firebase/firestore";
+import {User} from "@/constants";
 
 @Component({
   components: {ProductPageComponent}
 })
 export default class ProductView extends Vue {
-  @Prop() private id: string ;
-  private product ={
-    id:"",
-    name:"",
-    price:0,
-    seller:{} as User,
-    description:"",
-    image_ref:"",
+  @Prop() private id!: string;
+  private product = {
+    id: "",
+    name: "",
+    price: 0,
+    seller: {} as User,
+    description: "",
+    image_ref: "",
   }
 
-  async created() : Promise<void> {
+  async created(): Promise<void> {
     const db = getFirestore();
     const docSnap = await getDoc(doc(db, "products", this.id));
     if (docSnap.exists()) {
