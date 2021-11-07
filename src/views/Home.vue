@@ -34,7 +34,6 @@ export default class Home extends Vue {
   products: Product[] = [];
 
   async created(): Promise<void> {
-    console.count("created")
     const collectionSnap = await getDocs(collection(getFirestore(), "products"));
 
     for (const document of collectionSnap.docs) {
