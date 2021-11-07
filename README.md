@@ -29,7 +29,7 @@ ___
 
 #### Demo video link  (3,9MB) : 
  
-> [demo.avi (Audio Video Interleave)](https://github.com/MartinLenaerts/school-advanced-web-project/blob/master/demos/demo.mov)
+> [demo.avi (Audio Video Interleave)](https://github.com/MartinLenaerts/school-advanced-web-project/blob/master/demos/demo.avi)
 
 
 # Project setup
